@@ -13,11 +13,13 @@ import (
 var available = map[string]Download{
 	"asn-country":				Download{ "asn-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{} },
 	"dbip-country": 			Download{ "dbip-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "DBIP-LICENSE" } },
+	"dbip-geo-whois-asn-country": 		Download{ "dbip-geo-whois-asn-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "DBIP-LICENSE" } },
 	"geo-asn-country":			Download{ "geo-asn-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{} },
 	"geo-whois-asn-country":	Download{ "geo-whois-asn-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{} },
 	"geolite2-country":			Download{ "geolite2-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "GEOLITE2_LICENSE", "GEOLITE2_EULA" } },
+	"geolite2-geo-whois-asn-country":	Download{ "geolite2-geo-whois-asn-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "GEOLITE2_LICENSE", "GEOLITE2_EULA" } },
 	"iptoasn-country":			Download{ "iptoasn-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{} },
-	"webnet77-country":			Download{ "webnet77-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "WEBNET77-LICENSE" } },
+	//"webnet77-country":			Download{ "webnet77-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "WEBNET77-LICENSE" } },
 
 	"dbip-city":				Download{ "dbip-city", "gz", "CITY", "https://unpkg.com/@ip-location-db/", []string{ "DBIP-LICENSE" } },
 	"geolite2-city":			Download{ "geolite2-city", "gz", "CITY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "GEOLITE2_LICENSE", "GEOLITE2_EULA" } },

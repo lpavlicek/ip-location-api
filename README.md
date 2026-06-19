@@ -91,20 +91,18 @@ If you wish to expose the system without a reverse proxy, you may wish to update
 
 ### Allowed `COUNTRY` values
 
-- asn-country
 - dbip-country
-- geo-asn-country
-- geo-whois-asn-country
 - geolite2-country
 - iptoasn-country
-- webnet77-country
+- server-country
+- user-country
 
 ### Allowed `ASN` values
 
-- asn
 - dbip-asn
 - geolite2-asn
 - iptoasn-asn
+- origin-asn
 
 ### Allowed `CITY` values
 
@@ -294,9 +292,9 @@ make build_windows_arm64
 
 There is a Dockerfile included that supports building a docker container image, `ip-location-api`. This can be built by running `make dockerbuild`. By default, this uses the `mmdb` data storage, and open data that doesn't require a licence:
 
-* `COUNTRY` defaults to `geo-whois-asn-country`
+* `COUNTRY` defaults to `dbip-country`
 * `CITY` defaults to blank
-* `ASN` defaults to `asn`
+* `ASN` defaults to `dbip-asn`
 
 To run the docker image, map port 8080 to the desired port, and pass in any configuration variables. For example, to serve on port 8454, using an SQLite database, with the `dbip` data for country and ASN, but `geolite2` for city, run:
 

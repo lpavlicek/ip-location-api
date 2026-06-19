@@ -18,7 +18,7 @@ COPY . .
 RUN make build_linux
 
 # Create a minimal runtime image
-FROM --platform=$TARGETPLATFORM alpine:3.19 AS runtime
+FROM --platform=$TARGETPLATFORM alpine:3.21 AS runtime
 
 # Install CA certificates for HTTPS requests
 RUN apk add --no-cache ca-certificates tzdata
@@ -91,9 +91,9 @@ EXPOSE 8080
 ENV SERVER_HOST=0.0.0.0
 ENV SERVER_PORT=8080
 ENV API_KEY=""
-ENV COUNTRY="geo-whois-asn-country"
+ENV COUNTRY="dbip-country"
 ENV CITY=""
-ENV ASN="asn"
+ENV ASN="dbip-asn"
 ENV UPDATE_TIME="01:30"
 ENV LOAD_LOG_FREQ=50000
 # DB_TYPE can be mmdb, postgres, mysql, sqlite or :memory:

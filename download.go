@@ -10,24 +10,30 @@ import (
 	"golang.org/x/exp/slices"
 )
 
+const githubReleasesURL = "https://github.com/sapics/ip-location-db/releases/download/latest/"
+
 var available = map[string]Download{
-	"asn-country":				Download{ "asn-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{} },
-	"dbip-country": 			Download{ "dbip-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "DBIP-LICENSE" } },
-	"dbip-geo-whois-asn-country": 		Download{ "dbip-geo-whois-asn-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "DBIP-LICENSE" } },
-	"geo-asn-country":			Download{ "geo-asn-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{} },
-	"geo-whois-asn-country":	Download{ "geo-whois-asn-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{} },
-	"geolite2-country":			Download{ "geolite2-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "GEOLITE2_LICENSE", "GEOLITE2_EULA" } },
-	"geolite2-geo-whois-asn-country":	Download{ "geolite2-geo-whois-asn-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "GEOLITE2_LICENSE", "GEOLITE2_EULA" } },
-	"iptoasn-country":			Download{ "iptoasn-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{} },
-	//"webnet77-country":			Download{ "webnet77-country", "csv", "COUNTRY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "WEBNET77-LICENSE" } },
+	// COUNTRY databáze dostupné v GitHub Releases
+	"dbip-country":    Download{ "dbip-country", "csv", "COUNTRY", githubReleasesURL, []string{ "DBIP-LICENSE" } },
+	"geolite2-country": Download{ "geolite2-country", "csv", "COUNTRY", githubReleasesURL, []string{ "GEOLITE2_LICENSE", "GEOLITE2_EULA" } },
+	"iptoasn-country": Download{ "iptoasn-country", "csv", "COUNTRY", githubReleasesURL, []string{} },
+	"server-country":  Download{ "server-country", "csv", "COUNTRY", githubReleasesURL, []string{} },
+	"user-country":    Download{ "user-country", "csv", "COUNTRY", githubReleasesURL, []string{} },
+	// Odstraněno: asn-country, geo-asn-country, geo-whois-asn-country
+	// (tyto soubory nejsou dostupné v GitHub Releases od června 2026)
+	// Odstraněno: dbip-geo-whois-asn-country, geolite2-geo-whois-asn-country
+	// (extrakce z Whois databází zastavena kvůli RIR AUP compliance)
 
-	"dbip-city":				Download{ "dbip-city", "gz", "CITY", "https://unpkg.com/@ip-location-db/", []string{ "DBIP-LICENSE" } },
-	"geolite2-city":			Download{ "geolite2-city", "gz", "CITY", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "GEOLITE2_LICENSE", "GEOLITE2_EULA" } },
+	// CITY databáze dostupné v GitHub Releases
+	"dbip-city":     Download{ "dbip-city", "gz", "CITY", githubReleasesURL, []string{ "DBIP-LICENSE" } },
+	"geolite2-city": Download{ "geolite2-city", "gz", "CITY", githubReleasesURL, []string{ "GEOLITE2_LICENSE", "GEOLITE2_EULA" } },
 
-	"asn":						Download{ "asn", "csv", "ASN", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "ROUTEVIEWS-LICENSE", "DBIP-LICENSE" } },
-	"dbip-asn":					Download{ "dbip-asn", "csv", "ASN", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "DBIP-LICENSE" } },
-	"geolite2-asn":				Download{ "geolite2-asn", "csv", "ASN", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{ "GEOLITE2_LICENSE", "GEOLITE2_EULA" } },
-	"iptoasn-asn":				Download{ "iptoasn-asn", "csv", "ASN", "https://cdn.jsdelivr.net/npm/@ip-location-db/", []string{} },
+	// ASN databáze dostupné v GitHub Releases
+	"dbip-asn":     Download{ "dbip-asn", "csv", "ASN", githubReleasesURL, []string{ "DBIP-LICENSE" } },
+	"geolite2-asn": Download{ "geolite2-asn", "csv", "ASN", githubReleasesURL, []string{ "GEOLITE2_LICENSE", "GEOLITE2_EULA" } },
+	"iptoasn-asn":  Download{ "iptoasn-asn", "csv", "ASN", githubReleasesURL, []string{} },
+	"origin-asn":   Download{ "origin-asn", "csv", "ASN", githubReleasesURL, []string{} },
+	// Odstraněno: asn (RouteViews+DBIP kombinace) — soubor asn-ipv4.csv v releases neexistuje
 }
 
 func downloadDataToLoad(missing []string) []DataToLoad {
@@ -55,8 +61,8 @@ func downloadDataToLoad(missing []string) []DataToLoad {
 		}
 
 		urls := []string{
-			fmt.Sprintf(download.CDN + "%s/%s-ipv4.csv%s", download.Folder, download.Folder, compression),
-			fmt.Sprintf(download.CDN + "%s/%s-ipv6.csv%s", download.Folder, download.Folder, compression),
+			fmt.Sprintf(download.CDN + "%s-ipv4.csv%s", download.Folder, compression),
+			fmt.Sprintf(download.CDN + "%s-ipv6.csv%s", download.Folder, compression),
 		}
 
 		for _, url := range urls {
@@ -111,18 +117,34 @@ func downloadFile(filePath string, url string) (bool, error) {
 		currentEtag = fileReadSmall(etagFilePath)
 	}
 
-	fmt.Println("downloading Etag: " + url)
-	newEtag := getEtag(url)
+	fmt.Println("checking: " + url)
+	newEtag, statusCode := getEtag(url)
+
+	if statusCode == http.StatusNotFound {
+		if fileExists(filePath) {
+			fmt.Println("soubor na serveru nenalezen, použiji stávající lokální verzi: " + filePath)
+			return false, nil
+		}
+		return false, fmt.Errorf("soubor nenalezen na serveru a žádná lokální kopie neexistuje: %s", url)
+	}
 
 	if newEtag == "" || currentEtag != newEtag {
 		fileWriteSmall(etagFilePath, newEtag)
 
-		fmt.Println("downloading data file: " + url)
+		fmt.Println("downloading: " + url)
 		resp, err := http.Get(url)
 		if err != nil {
 			return false, err
 		}
 		defer resp.Body.Close()
+
+		if resp.StatusCode == http.StatusNotFound {
+			if fileExists(filePath) {
+				fmt.Println("soubor na serveru nenalezen, použiji stávající lokální verzi: " + filePath)
+				return false, nil
+			}
+			return false, fmt.Errorf("soubor nenalezen na serveru a žádná lokální kopie neexistuje: %s", url)
+		}
 
 		out, err := os.Create(filePath)
 		if err != nil {
@@ -133,10 +155,9 @@ func downloadFile(filePath string, url string) (bool, error) {
 		_, err = io.Copy(out, resp.Body)
 
 		return true, err
-	} else {
-		fmt.Println("Etag unchanged, skipping")
 	}
 
+	fmt.Println("beze změny, přeskakuji: " + url)
 	return false, nil
 }
 

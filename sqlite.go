@@ -15,7 +15,7 @@ import (
 var sqliteDb *sql.DB
 
 func sqliteConnect() {
-	connStr		:= fmt.Sprintf(os.Getenv("DB_FILE"))
+	connStr		:= os.Getenv("DB_FILE")
 	conn, err	:= sql.Open("sqlite", connStr)
 	if err != nil {
 		panic(err)

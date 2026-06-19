@@ -185,19 +185,31 @@ func findIPRanges(ipRangeStart string, ipRangeEnd string) []*net.IPNet {
 	return ipNets
 }
 
-func getEtag(url string) string {
+func getEtag(url string) (string, int) {
 	resp, err := http.Head(url)
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
 
-	etag, ok := resp.Header["Etag"]
-	if ok {
-		return etag[0];
+	statusCode := resp.StatusCode
+	if statusCode == http.StatusNotFound {
+		return "", statusCode
 	}
 
-	return ""
+	etag, ok := resp.Header["Etag"]
+	if ok {
+		return etag[0], statusCode
+	}
+
+	// Fallback pro GitHub Releases, které nemusí vracet Etag:
+	// použijeme Last-Modified jako identifikátor změny
+	lastMod, ok := resp.Header["Last-Modified"]
+	if ok {
+		return lastMod[0], statusCode
+	}
+
+	return "", statusCode
 }
 
 func getIpVersion(ipString string) int {
